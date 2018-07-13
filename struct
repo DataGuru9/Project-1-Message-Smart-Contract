@@ -1,0 +1,15 @@
+pragma solidity ^0.4.24;
+
+contract structure {
+    struct demo {
+        uint256 rollno;
+        string name;
+        string subject;
+        string fathername;
+    }
+    demo[] public sd;
+    
+    function store(uint256 _rollno, string _name, string _subject, string _fathername) public{
+        sd.push(demo(_rollno, _name, _subject, _fathername));
+    }
+}
