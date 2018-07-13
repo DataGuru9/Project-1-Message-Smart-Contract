@@ -12,4 +12,8 @@ contract structure {
     function store(uint256 _rollno, string _name, string _subject, string _fathername) public{
         sd.push(demo(_rollno, _name, _subject, _fathername));
     }
+    
+    function getValue(uint256 serialNumber) public view returns(uint256, string, string, string){
+        return (sd[serialNumber].rollno,sd[serialNumber].name, sd[serialNumber].subject, sd[serialNumber].fathername);
+    }
 }
