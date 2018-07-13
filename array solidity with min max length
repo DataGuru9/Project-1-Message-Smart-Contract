@@ -1,0 +1,38 @@
+pragma solidity ^0.4.24;
+contract task {
+    uint256[] public minmax;
+    function one(uint256 entry) public{
+        minmax.push(entry);
+    }
+    
+    function leng() public view returns(uint256){
+        uint256 len = minmax.length;
+        return (len);
+    }
+    //function ret() public view returns(uint[]){
+        //return(minmax);
+    //}
+    
+    function min() public view returns(uint256){
+        uint256 minimal = minmax[0];
+        for(uint256 i; i < minmax.length; i++){
+            if(minmax[i] < minimal){
+                minimal = minmax[i];
+            
+            }
+            
+        }
+        return minimal;
+    }
+    
+    function max() public view returns(uint256){
+        uint256 maximal = minmax[0];
+        for (uint256 i; i< minmax.length; i++){
+            if(minmax[i] > maximal){
+                maximal = minmax[i];
+            }
+        }
+        return maximal;
+    }
+    
+}
