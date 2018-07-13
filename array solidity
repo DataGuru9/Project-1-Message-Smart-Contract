@@ -1,0 +1,30 @@
+pragma solidity ^0.4.24;
+contract dynamic2{
+    uint256[] public dd9;
+    function dy2(uint256 entry) public{
+        dd9.push(entry);
+    }
+    
+    function retu () public view returns(uint256[]){
+        return (dd9);
+    }
+    function min() public view returns (uint256){
+        uint256 minimal = dd9[0];
+        for(uint256 i; i< dd9.length; i++){
+            if(dd9[i] < minimal){
+                 minimal = dd9[i];
+            }
+           
+        }
+        return minimal;
+    }
+    function max() public view returns(uint256){
+        uint256 maximal = dd9[0];
+        for(uint256 i; i < dd9.length; i++){
+            if(dd9[i] > maximal){
+                maximal = dd9[i];
+            }
+        }
+        return maximal;
+    }
+}
