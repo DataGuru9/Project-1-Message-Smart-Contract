@@ -1,0 +1,25 @@
+pragma solidity ^0.4.24;
+
+// created a contract
+contract mappingdemo{
+    //created a struct
+    struct Person{
+        uint id;
+        bytes32 name;
+        bool isPerson;
+    
+    }
+    //mapped any address entering to above person and named it as p
+    mapping(address => Person) p;
+    //create a function with type of data as address and anything entered into _a
+    // which will returns uint id, name and bool
+    //now p[_a] will search for that entered value in p-which is mapping name
+    // search results are variable person below
+    function getPerson(address _a) view public returns(uint, bytes32, bool){
+        var person = p[_a];
+        // now variable person which has mapped value of _a address will give 
+        //respective id, name, bool
+    return (person.id, person.name, person.isPerson);
+    }
+    
+} 
