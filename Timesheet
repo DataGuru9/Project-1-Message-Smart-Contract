@@ -1,0 +1,28 @@
+pragma solidity ^0.4.24;
+contract Timesheet {
+
+    address employee;
+    address boss;
+    
+    mapping(uint  => uint) times; // day (starting 1.1.1970) -> hours worked
+    mapping(uint  => bool) approvals; // day (starting 1.1.1970) -> is approved
+    
+    // Event (=logging) for logged work
+    event WorkLogged(uint _day, uint _hours);
+
+    constructor(address _employee, address _boss) public {
+        employee = _employee;
+        boss = _boss;
+    }
+
+    function logWork(uint _day, uint _hours) public {
+        // only accept work logged by employee:
+        if (msg.sender != employee) { 
+            return;
+        }
+        // only accept work logged if day not yet approved:
+        if (approvals[_day] == true) {
+            return;
+        }
+        times[_day] = _hours;
+        emit WorkLogged(_day, _hours);
