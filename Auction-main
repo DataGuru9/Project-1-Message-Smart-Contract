@@ -1,0 +1,82 @@
+pragma solidity ^0.4.24;
+
+contract Auction {
+ //Auction end time
+ uint256 public endTime;
+ address public owner;
+ //if auction is completed then you don't have permission to change 
+ bool public END;
+ bool public pause;
+ bool public auctionStarted;
+ address public maxBidder;
+ uint256 public maxValue;
+ uint8 public countBidder = 0;
+
+ mapping (address => uint256) public bidder;
+ mapping (uint8 => address) public bidderCount;
+ modifier onlyOwner(){
+ require(msg.sender == owner);
+ _;
+ } 
+ constructor() public{
+ owner = msg.sender;
+ }
+ function start() public onlyOwner{
+ auctionStarted = true;
+ endTime = now + 10 minutes;
+ }
+
+ //Pause Auction process
+ function PauseAuction() public{
+ require(END!=true);
+ require(now <= endTime);
+ pause = true;
+ }
+ //ResumeAuction process
+ function ResumeAuction() public{
+ require(pause == true);
+ pause = false;
+ }
+ //When auction ended forcefully
+ function EmergencyStop() public{
+ require(!END);
+ require(now <= endTime);
+ END = true;
+ }
+ function bid() public payable {
+ require(auctionStarted);//auctionStarted == true
+ //Certain condition require to check the process before starting bidding process
+ require(now <= endTime);
+ require(!pause);
+ require(END != true);
+
+ require (msg.value >= 1 ether && msg.value <= 5 ether);
+ bidder[msg.sender] = msg.value;
+ bidderCount[countBidder] = msg.sender;
+ countBidder++;
+ }
+ //function to end auction
+ //auction can only be ended by owner account
+ function end() public onlyOwner{
+ require(auctionStarted);
+ require(now > endTime);
+ auctionStarted = false;
+ maxValue = bidder[bidderCount[0]];
+ for(uint8 i = 0; i < countBidder ; i++){
+ address temp = bidderCount[i];
+ if (maxValue < bidder[temp]){
+ maxValue = bidder[temp];
+ maxBidder = temp;
+ }
+ }
+ END = true;
+ }
+
+ function getMaxbiderAndValue () public view returns(address, uint256) {
+ require (END);
+ return (maxBidder, maxValue);
+ }
+ function getContractBalance() public view returns(uint256){
+ return address(this).balance;
+ }
+}
