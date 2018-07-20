@@ -1,0 +1,95 @@
+/*endtime
+start time
+pause
+end
+start
+owner
+highest bidder address
+lowest bidder address
+number of bidding
+highest bidding amount
+lowest bidding amount
+resume auction*/
+
+pragma solidity ^0.4.24;
+ //define all variables for the terms mentioned above
+ contract Auction{
+     uint256 public EndTime;
+     uint256 public StartTime;
+     address public owner;
+     bool public pause;
+     bool public start;
+     bool public end;
+     bool public resume;
+     address public MaxBidder;
+     address public MinBider;
+     //uint256 public BidCount;
+     uint256 public MaxBidAmount;
+     uint256 public MinBidAmount;
+     uint256 public countbidder =0;
+//to connect the address which is bidding to the amount
+      mapping (address => uint) public Bidder;
+      mapping(uint256 => address) public BidCount;
+
+//to create modifier for owner only to use it everywhere
+
+modifier OnlyOwner(){
+    require(owner == msg.sender);
+    _;
+}
+
+constructor() public {
+    owner = msg.sender;
+}
+
+function startAuction() public OnlyOwner{
+    start = true;
+    EndTime = now + 10 minutes;
+}
+
+
+function pauseAuction() public OnlyOwner{
+    require(start);
+    require(now <= EndTime);
+    pause = true;
+}
+
+function resumeAuction() public OnlyOwner{
+    require(pause == true);
+    require(now <= EndTime);
+    pause = false;
+}
+
+function bid() public payable{
+    //require(now <= EndTime);
+    require(start = true);
+    require(!pause);
+    require(!end);
+    require(msg.value >= 1 ether && msg.value <= 25 ether);
+    Bidder[msg.sender] = msg.value;
+    BidCount[countbidder] = msg.sender;
+    countbidder++;
+
+}
+
+function end() public OnlyOwner{
+    require(now > EndTime);
+    require(start);
+    end = true;
+    start = false;
+    MaxBidAmount = Bidder[BidCount[0]];
+    MaxBidder = BidCount[0];
+    for(uint i = 0; i < countbidder; i++ ){
+        if (MaxBidAmount < Bidder[BidCount[0]]){
+            MaxBidAmount = Bidder[BidCount[i]];
+        }
+    }
+}
+function getbidder () public view returns(uint256, address){
+    require(end);
+    return(MaxBidAmount, MaxBidder);
+}
+function getbalance () public view returns(uint256){
+    return address(this).balance;
+}
+}
