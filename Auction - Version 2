@@ -22,9 +22,12 @@ pragma solidity ^0.4.24;
      bool public end;
      bool public resume;
      address public MaxBidder;
+     address public SecondMaxBidder;
+     address public ThirdMaxBidder;
      address public MinBider;
      //uint256 public BidCount;
      uint256 public MaxBidAmount;
+     uint256 public SecondBidAmount;
      uint256 public MinBidAmount;
      uint256 public countbidder =0;
 //to connect the address which is bidding to the amount
@@ -44,7 +47,7 @@ constructor() public {
 
 function startAuction() public OnlyOwner{
     start = true;
-    EndTime = now + 10 minutes;
+    EndTime = now + 2 minutes;
 }
 
 
@@ -72,23 +75,34 @@ function bid() public payable{
 
 }
 
-function end() public OnlyOwner{
+function endAuction() public OnlyOwner{
     require(now > EndTime);
     require(start);
     end = true;
     start = false;
     MaxBidAmount = Bidder[BidCount[0]];
     MaxBidder = BidCount[0];
+    SecondBidAmount = Bidder[BidCount[0]];
+    SecondMaxBidder = BidCount[0];
     for(uint i = 0; i < countbidder; i++ ){
-        if (MaxBidAmount < Bidder[BidCount[0]]){
+        if (MaxBidAmount < Bidder[BidCount[i]]){
             MaxBidAmount = Bidder[BidCount[i]];
+            MaxBidder = BidCount[i];
         }
     }
+    for(uint j = 0; j < countbidder; j++){
+        if(SecondBidAmount < Bidder[BidCount[j]] && Bidder[BidCount[j]] < MaxBidAmount){
+            SecondBidAmount = Bidder[BidCount[j]];
+            SecondMaxBidder = BidCount[j];
+        }
+    }
+    
 }
 function getbidder () public view returns(uint256, address){
     require(end);
     return(MaxBidAmount, MaxBidder);
 }
+ 
 function getbalance () public view returns(uint256){
     return address(this).balance;
 }
