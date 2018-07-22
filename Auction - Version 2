@@ -11,12 +11,16 @@ highest bidding amount
 lowest bidding amount
 resume auction*/
 
+//Understand the requirement and think about the variables and integers required
+//create contract name and declare variables
+
 pragma solidity ^0.4.24;
  //define all variables for the terms mentioned above
  contract Auction{
      uint256 public EndTime;
      uint256 public StartTime;
      address public owner;
+     address public NewOwner;
      bool public pause;
      bool public start;
      bool public end;
@@ -31,6 +35,8 @@ pragma solidity ^0.4.24;
      uint256 public MinBidAmount;
      uint256 public countbidder =0;
 //to connect the address which is bidding to the amount
+//create mapping fo connect bid amount with address of Bidder
+// create 2nd mapping to connect each address with bid countbidder
       mapping (address => uint) public Bidder;
       mapping(uint256 => address) public BidCount;
 
@@ -40,10 +46,14 @@ modifier OnlyOwner(){
     require(owner == msg.sender);
     _;
 }
-
+//to declare the construct for owner
 constructor() public {
     owner = msg.sender;
 }
+
+
+//we will write functions below to decide the actions for each call-----
+
 
 function startAuction() public OnlyOwner{
     start = true;
@@ -69,6 +79,9 @@ function bid() public payable{
     require(!pause);
     require(!end);
     require(msg.value >= 1 ether && msg.value <= 25 ether);
+    //because of the mapping -this below expression will check the address
+    //entered inside as msg.sender to connect it with uint-means bidding amount
+    //Bidcount = countbidder for each msg.sender- times
     Bidder[msg.sender] = msg.value;
     BidCount[countbidder] = msg.sender;
     countbidder++;
@@ -90,14 +103,26 @@ function endAuction() public OnlyOwner{
             MaxBidder = BidCount[i];
         }
     }
+    //for second bidder take another 'j' -make j less thn total countbidder
+    //second bid amount less thn bid count of j and less thn max bid amount
+    //give bid count of 'j' as second max bidder- which is the address of bidder and
+    //due to mapping we will get the bid amount
     for(uint j = 0; j < countbidder; j++){
         if(SecondBidAmount < Bidder[BidCount[j]] && Bidder[BidCount[j]] < MaxBidAmount){
             SecondBidAmount = Bidder[BidCount[j]];
             SecondMaxBidder = BidCount[j];
         }
     }
-    
 }
+// after bidding we transfer the bid amount to owner account
+//also we make the highest bidder as the new owner
+function TransferAndOwner () public OnlyOwner{
+    require(now > EndTime);
+    require(end == true);
+    owner.transfer(MaxBidAmount);
+    NewOwner = MaxBidder;
+}            
+
 function getbidder () public view returns(uint256, address){
     require(end);
     return(MaxBidAmount, MaxBidder);
