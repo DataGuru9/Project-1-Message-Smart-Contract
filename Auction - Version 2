@@ -56,7 +56,7 @@ constructor() public {
 
 
 function startAuction() public OnlyOwner{
-    start = true;
+    start = true; // because current status of any variable defined as boolean in the beginning is 'False' by default.
     EndTime = now + 2 minutes;
 }
 
@@ -64,7 +64,7 @@ function startAuction() public OnlyOwner{
 function pauseAuction() public OnlyOwner{
     require(start);
     require(now <= EndTime);
-    pause = true;
+    pause = true; // because current status of any variable defined as boolean in the beginning is 'False' by default.
 }
 
 function resumeAuction() public OnlyOwner{
