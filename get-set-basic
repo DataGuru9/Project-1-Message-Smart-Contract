@@ -1,0 +1,14 @@
+pragma solidity ^0.4.24;
+
+contract test{
+
+string public name;
+
+function set(string _name) public{
+    name = _name;
+}
+function get() public view returns(string){
+    return name;
+}
+
+}
