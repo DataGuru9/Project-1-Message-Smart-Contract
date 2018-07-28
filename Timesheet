@@ -1,28 +1,36 @@
+/* 
+1. Employee
+2. manager
+3. no of days
+4. amount per day
+5. total amount
+6. approvals */
+
 pragma solidity ^0.4.24;
 contract Timesheet {
 
+    struct TS{
     address employee;
-    address boss;
-    
-    mapping(uint  => uint) times; // day (starting 1.1.1970) -> hours worked
-    mapping(uint  => bool) approvals; // day (starting 1.1.1970) -> is approved
+    string name;
+    uint256 nodays;
+    bool approvals;
+    }
+    mapping(address => TS) TTSS;
+    //mapping(uint256 => bool) approval;
     
     // Event (=logging) for logged work
-    event WorkLogged(uint _day, uint _hours);
-
-    constructor(address _employee, address _boss) public {
-        employee = _employee;
-        boss = _boss;
+    //event WorkLogged(uint _day, uint _hours);
+    //modifier OnlyManager(){
+        //msg.sender == manager;
+        //_;
+    //}
+    function set(address _employee, string _name, uint256 _days, bool _app) public {
+        TTSS[_employee].name = _name;
+        TTSS[_employee].nodays = _days;
+        TTSS[_employee].approvals = _app;
     }
-
-    function logWork(uint _day, uint _hours) public {
-        // only accept work logged by employee:
-        if (msg.sender != employee) { 
-            return;
-        }
-        // only accept work logged if day not yet approved:
-        if (approvals[_day] == true) {
-            return;
-        }
-        times[_day] = _hours;
-        emit WorkLogged(_day, _hours);
+        
+    function get(address _employee) public view returns(string, uint, bool){
+        return (TTSS[_employee].name, TTSS[_employee].nodays, TTSS[_employee].approvals);
+    }
+}
