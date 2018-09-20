@@ -1,3 +1,5 @@
+// Website Ref - https://medium.com/@merunasgrincalaitis/smart-contract-project-to-do-notes-and-my-new-book-8d569d4186a7
+
 pragma solidity ^0.4.25;
 
 contract memo{
