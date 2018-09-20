@@ -1,0 +1,39 @@
+pragma solidity ^0.4.25;
+
+contract memo{
+    
+    struct list{
+        uint256 id;
+        bytes32 content;
+        address owner;
+        bool isCompleted;
+        uint256 timestamp;
+    }
+    
+    uint256 public constant maxtodo = 100;
+    
+    mapping (address => list[maxtodo]) internal todostructmap;
+    mapping (address => uint256) internal lastid;
+    
+    
+    modifier OnlyOwner(address _owner){
+        require(msg.sender == _owner);
+        _;
+    }
+    
+    function addlist(bytes32 _content) public {
+        list memory my_note = list(lastid[msg.sender], _content, msg.sender, false, now);
+        //lastid[msg.sender] gives id number and below expression uses tht id num to generate address again 
+        // mapping name [address] of [id created by using the msg.sender address]
+        todostructmap[msg.sender][lastid[msg.sender]] = my_note;
+        if(lastid[msg.sender] >= maxtodo) lastid[msg.sender] = 0;
+        else lastid[msg.sender]++;
+    }
+    
+    // Mark a todo as completed
+   function markTodoAsCompleted(uint256 _todoId) public OnlyOwner(todostructmap[msg.sender][_todoId].owner) {
+      require(_todoId < maxtodo);
+      require(!todostructmap[msg.sender][_todoId].isCompleted);
+      todostructmap[msg.sender][_todoId].isCompleted = true;
+   }
+}
